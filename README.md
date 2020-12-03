@@ -1,23 +1,38 @@
 # csprog2020 group18
 
-## Install
+## Requirements
++ make
 ```console
-$ sudo apt update
 $ sudo apt install build-essential
 $ make --version
 ```
 
-## Compile
++ javac, java
+```console
+$ sudo apt install default-jdk
+$ javac --version
+$ java --version
+```
+
++ openjfx
+```console
+$ sudo apt install openjfx
+$ dpkg -L openjfx
+```
+
+## Commands
+基本的にコンパイルや実行などは `make` で行ってください。そっちのほうが楽ですし、メンバー全員で統一することができます。
+### Compile
 ```console
 $ make
 ```
 
-## Run
+### Run
 ```console
 $ make run
 ```
 
-## Clean
+### Clean
 ```console
 $ make clean
 ```
