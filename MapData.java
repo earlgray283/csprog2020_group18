@@ -34,7 +34,9 @@ public class MapData {
 
         fillMap(MapData.TYPE_WALL);
         digMap(1, 3);
+
         goal = find_goal();
+
         setImageViews();
     }
 
@@ -121,7 +123,6 @@ public class MapData {
         int max_dist = -1;
         int[] ans = {-1, -1};
         int[][] dists = new int[height][width];
-
 
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
