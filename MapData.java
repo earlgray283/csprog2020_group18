@@ -18,7 +18,8 @@ public class MapData {
     private int[][] maps;
     private int width;
     private int height;
-    public int[][] route_to_goal;
+    private int[][] route_to_goal;
+    private int[] goal;
 
     MapData(int x, int y){
         mapImages = new Image[2];
@@ -33,6 +34,7 @@ public class MapData {
 
         fillMap(MapData.TYPE_WALL);
         digMap(1, 3);
+        goal = find_goal();
         setImageViews();
     }
 
@@ -111,22 +113,25 @@ public class MapData {
         return dl;
     }
 
+    // find goal. The goal is defined as the maximum manhattan distance and the maximum dist.
     public int[] find_goal() {
         int[] dx = {1, 0, -1, 0};
         int[] dy = {0, -1, 0, 1};
         int max_manhattan= -1;
         int max_dist = -1;
         int[] ans = {-1, -1};
-        int[][] dists = new int[width][height];
+        int[][] dists = new int[height][width];
+
 
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                dists[i][j] = 0;
+                dists[i][j] = -1;
             }
         }
 
         Queue<int[]> queue = new ArrayDeque<>();
         queue.add(new int[] {1, 1});
+        dists[1][1] = 0;
 
         // bfs
         while (!queue.isEmpty()) {
@@ -139,23 +144,31 @@ public class MapData {
 
                 int next_x = now[0] + dx[i];
                 int next_y = now[1] + dy[i];
+
+                if (dists[next_y][next_x] != -1 && dists[next_y][next_x] < dists[now[1]][now[0]] + 1) {
+                    continue;
+                }
                 if (getMap(next_x, next_y) == MapData.TYPE_SPACE) {
                     queue.add(new int[]{next_x, next_y});
                     dists[next_y][next_x] = dists[now[1]][now[0]] + 1;
-                    if (max_manhattan < manhattan_dist(now[0], now[1], next_x, next_y) && max_dist < dists[next_y][next_x]) {
-                        max_manhattan = next_x + next_y;
+                    if (max_dist < dists[next_y][next_x] ||
+                            (max_dist == dists[next_y][next_x] && max_manhattan < manhattan_dist(1, 1, next_x, next_y))) {
+                        max_manhattan = manhattan_dist(1, 1, next_x, next_y);
                         max_dist = dists[next_y][next_x];
-                        ans = new int[]{next_x, next_x};
+                        ans = new int[]{next_x, next_y};
                     }
                 }
             }
         }
+
+        System.out.println("goal: " + ans[0] + ", " + ans[1]);
 
         route_to_goal = restore_route(dists, ans);
 
         return ans;
     }
 
+    // restore route to the goal.
     public int[][] restore_route(int[][] dists, int[] goal) {
         int[] dx = {1, 0, -1, 0};
         int[] dy = {0, -1, 0, 1};
@@ -177,7 +190,7 @@ public class MapData {
 
                 int next_x = now[0] + dx[i];
                 int next_y = now[1] + dy[i];
-                if (dists[next_y][next_x] == dists[now[1]][now[0]]) {
+                if (dists[next_y][next_x] == dists[now[1]][now[0]] - 1) {
                     queue.add(new int[]{next_x, next_y});
                     route[route_i--] = new int[]{next_x, next_y};
                     break;
@@ -193,5 +206,9 @@ public class MapData {
     // return abs(a_x - b_x) + abs(a_y - b_y)
     private int manhattan_dist(int a_x, int a_y, int b_x, int b_y) {
         return Math.abs(a_x - b_x) + Math.abs(a_y - b_y);
+    }
+
+    public boolean is_goal(int x, int y) {
+        return goal[0] == x && goal[1] == y;
     }
 }
