@@ -28,6 +28,19 @@ public class MapGameController implements Initializable {
         drawMap(chara, mapData);
     }
 
+    public void initialize() {
+        mapData = new MapData(21, 15);
+        chara = new MoveChara(1, 1, mapData);
+        mapImageViews = new ImageView[mapData.getHeight()*mapData.getWidth()];
+        for(int y=0; y<mapData.getHeight(); y++){
+            for(int x=0; x<mapData.getWidth(); x++){
+                int index = y*mapData.getWidth() + x;
+                mapImageViews[index] = mapData.getImageView(x,y);
+            }
+        }
+        drawMap(chara, mapData);
+    }
+
     // Draw the map
     public void drawMap(MoveChara c, MapData m){
         int cx = c.getPosX();
@@ -60,6 +73,12 @@ public class MapGameController implements Initializable {
 
         if (mapData.is_goal(chara.getPosX(), chara.getPosY())) {
             System.out.println("goal");
+            try {
+                Thread.sleep(2000, 0);
+            } catch(InterruptedException e) {
+                System.out.println(e);
+            }
+            initialize();
         }
     }
 
