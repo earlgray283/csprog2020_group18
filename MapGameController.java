@@ -1,3 +1,4 @@
+import java.io.File;
 import java.net.URL;
 import java.util.Random;
 import java.util.ResourceBundle;
@@ -9,6 +10,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.AudioClip;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -19,10 +21,12 @@ public class MapGameController implements Initializable {
     public GridPane mapGrid, itemGrid;
     public ImageView[] mapImageViews;
     public Text scoreText;
+    private AudioClip audioClip;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         mapData = new MapData(21, 15);
+        
         chara = new Chara(1, 1, mapData);
         mapImageViews = new ImageView[mapData.getHeight() * mapData.getWidth()];
         for (int y = 0; y < mapData.getHeight(); y++) {
@@ -126,6 +130,7 @@ public class MapGameController implements Initializable {
         if (mapData.is_goal(chara.getPosX(), chara.getPosY())) {
             if (chara.existsItem(MapData.ITEM_GOAL_FLG)) {
                 System.out.println("goal");
+                mapData.stopAudio();
 
                 try {
                     Thread.sleep(2000, 0);
@@ -139,19 +144,24 @@ public class MapGameController implements Initializable {
     }
 
     public void handleItems(int item_id, int x, int y) {
+        String se_path = "";
         switch (item_id) {
             case MapData.ITEM_NONE:
                 chara.addScore(-1);
                 break;
             case MapData.ITEM_GOAL_FLG:
+                se_path = "se/get_item.mp3";
                 break;
             case MapData.ITEM_SCORE_P:
+                se_path = "se/get_item.mp3";
                 chara.addScore(5);
                 break;
             case MapData.ITEM_SCORE_M:
+                se_path = "se/gorilla.mp3";
                 chara.addScore(-5);
                 break;
             case MapData.ITEM_WARP:
+                se_path = "se/warp.mp3";
                 Random rnd = new Random();
                 while (true) {
                     int x_ = rnd.nextInt(mapData.getWidth());
@@ -168,12 +178,17 @@ public class MapGameController implements Initializable {
                 System.out.println("no such item");
                 return;
         }
+       
+        if (item_id != MapData.ITEM_NONE && !se_path.equals("")) {
+            AudioClip audioClip = new AudioClip(new File(se_path).toURI().toString());
+            audioClip.play();
+        }
 
         chara.setInventory(item_id);
 
         if (chara.getScore() < 0)
             chara.addScore(-chara.getScore());
-        
+
         mapData.setMap(x, y, MapData.TYPE_SPACE);
         mapData.setItem(x, y, MapData.ITEM_NONE);
         mapData.setImageViews();

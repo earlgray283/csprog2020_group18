@@ -1,9 +1,11 @@
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-
+import java.io.File;
 import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.Random;
+
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.media.AudioClip;
 
 public class MapData {
     // enum にしたいな
@@ -22,6 +24,7 @@ public class MapData {
     private static final String itemImageFiles[] = { "png/map/SPACE.png", "png/items/key.png", "png/items/milk.png",
             "png/items/gorilla.png", "png/items/ufo.png", "png/items/hint.png" };
 
+    private AudioClip audioClip;
     private Image[] mapImages, itemImages;
     private ImageView[][] mapImageViews;
     private int[][] maps;
@@ -37,6 +40,10 @@ public class MapData {
     private int[] goal;
 
     MapData(int x, int y) {
+        audioClip = new AudioClip(new File("bgm/map.mp3").toURI().toString());
+        audioClip.setVolume(0.5);
+        audioClip.setCycleCount(AudioClip.INDEFINITE);
+        audioClip.play();
 
         mapImages = new Image[2];
         for (int i = 0; i < 2; i++)
@@ -70,6 +77,10 @@ public class MapData {
         return width;
     }
 
+    public void stopAudio() {
+        audioClip.stop();
+    }
+
     private int[][] setItemMap() {
         int[][] item_map = new int[height][width];
         Random rand = new Random();
@@ -82,7 +93,7 @@ public class MapData {
                 do {
                     y = rand.nextInt(height);
                     x = rand.nextInt(width);
-                } while (getMap(x, y) == TYPE_WALL || item_map[y][x] != ITEM_NONE);
+                } while (getMap(x, y) == TYPE_WALL || item_map[y][x] != ITEM_NONE || x == 1 || y == 1);
                 item_map[y][x] = i;
             }
         }
