@@ -108,9 +108,18 @@ public class MapData {
         item_map[y][x] = type;
     }
 
+    public boolean existsItem(int id) {
+        return inventory[id] > 0 ? true : false;
+    }
+
+    public int[] getInventry() {
+        return inventory;
+    }
+
     public void handleItems(int item_id, int x, int y) {
         switch (item_id) {
             case ITEM_NONE:
+                score -= 1;
                 break;
             case ITEM_GOAL_FLG:
                 break;
@@ -130,6 +139,7 @@ public class MapData {
                 System.out.println("no such item");
                 return;
         }
+        if (score < 0) score = 0;
         setMap(x, y, MapData.TYPE_SPACE);
         setItem(x, y, MapData.ITEM_NONE);
         setImageViews();

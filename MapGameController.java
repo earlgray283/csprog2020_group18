@@ -17,6 +17,7 @@ public class MapGameController implements Initializable {
     public MoveChara chara;
     public GridPane mapGrid, itemGrid;
     public ImageView[] mapImageViews;
+    public Text scoreText;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -28,6 +29,8 @@ public class MapGameController implements Initializable {
                 setMapImageViews(x, y);
             }
         }
+
+        scoreText.setText(String.valueOf(21 * 15));
 
         drawMap(chara, mapData);
     }
@@ -47,6 +50,8 @@ public class MapGameController implements Initializable {
                 mapImageViews[index] = mapData.getImageView(x, y);
             }
         }
+
+        scoreText.setText(String.valueOf(21 * 15));
 
         drawMap(chara, mapData);
     }
@@ -69,6 +74,8 @@ public class MapGameController implements Initializable {
         }
 
         itemGrid.getChildren().clear();
+        itemGrid.setStyle("-fx-grid-lines-visible: true;");
+        int[] inventory = m.getInventry();
 
         for (int i = 0, id = 1; i < 4; i++) {
             for (int j = 0; j < 2; j++) {
@@ -80,7 +87,7 @@ public class MapGameController implements Initializable {
                 imgviw.setFitHeight(80.0);
                 imgviw.setFitWidth(80.0);
 
-                Text txt = new Text("0");
+                Text txt = new Text(String.valueOf(inventory[id]));
                 txt.setFont(new Font(30));
                 txt.setTextAlignment(TextAlignment.RIGHT);
 
@@ -89,6 +96,7 @@ public class MapGameController implements Initializable {
                 id++;
             }
         }
+        
     }
 
     // Get users key actions
@@ -106,21 +114,26 @@ public class MapGameController implements Initializable {
             rightButtonAction();
         }
 
-        if (mapData.getItem(chara.getPosX(), chara.getPosY()) != MapData.ITEM_NONE) {
-            mapData.handleItems(mapData.getItem(chara.getPosX(), chara.getPosY()), chara.getPosX(), chara.getPosY());
-            setMapImageViews(chara.getPosX(), chara.getPosY());
-        }
+        System.out.println(mapData.getScore());
+        String s = String.valueOf(mapData.getScore());
+        System.out.println(s);
+        scoreText.setText(s);
+
+        mapData.handleItems(mapData.getItem(chara.getPosX(), chara.getPosY()), chara.getPosX(), chara.getPosY());
+        setMapImageViews(chara.getPosX(), chara.getPosY());
 
         if (mapData.is_goal(chara.getPosX(), chara.getPosY())) {
-            System.out.println("goal");
+            if (mapData.existsItem(MapData.ITEM_GOAL_FLG)) {
+                System.out.println("goal");
 
-            try {
-                Thread.sleep(2000, 0);
-            } catch (InterruptedException e) {
-                System.out.println(e);
+                try {
+                    Thread.sleep(2000, 0);
+                } catch (InterruptedException e) {
+                    System.out.println(e);
+                }
+
+                initialize();
             }
-
-            initialize();
         }
     }
 
