@@ -8,8 +8,8 @@ public class MoveChara {
     public static final int TYPE_RIGHT = 2;
     public static final int TYPE_UP = 3;
 
-    private final String[] directions = {"Down", "Left", "Right", "Up"};
-    private final String[] animationNumbers = {"1", "2", "3"};
+    private final String[] directions = { "Down", "Left", "Right", "Up" };
+    private final String[] animationNumbers = { "1", "2", "3" };
     private final String pngPathBefore = "png/cat";
     private final String pngPathAfter = ".png";
 
@@ -99,7 +99,7 @@ public class MoveChara {
         private Image[] charaImages = null;
         private int index = 0;
 
-        private long duration = 500 * 1000000L;   // 500[ms]
+        private long duration = 500 * 1000000L; // 500[ms]
         private long startTime = 0;
 
         private long count = 0L;

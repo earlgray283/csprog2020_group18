@@ -8,10 +8,7 @@ public class MapData {
     public static final int TYPE_SPACE = 0;
     public static final int TYPE_WALL = 1;
     public static final int TYPE_OTHERS = 2;
-    private static final String mapImageFiles[] = {
-            "png/SPACE.png",
-            "png/WALL.png"
-    };
+    private static final String mapImageFiles[] = { "png/SPACE.png", "png/WALL.png" };
 
     private Image[] mapImages;
     private ImageView[][] mapImageViews;
@@ -102,7 +99,7 @@ public class MapData {
 
     // shuffle dx and dy
     public int[][] shuffle() {
-        int[][] dl = {{0, 1}, {0, -1}, {-1, 0}, {1, 0}};
+        int[][] dl = { { 0, 1 }, { 0, -1 }, { -1, 0 }, { 1, 0 } };
         int[] tmp;
 
         for (int i = 0; i < dl.length; i++) {
@@ -115,13 +112,14 @@ public class MapData {
         return dl;
     }
 
-    // find goal. The goal is defined as the maximum manhattan distance and the maximum dist.
+    // find goal. The goal is defined as the maximum manhattan distance and the
+    // maximum dist.
     public int[] find_goal() {
-        int[] dx = {1, 0, -1, 0};
-        int[] dy = {0, -1, 0, 1};
+        int[] dx = { 1, 0, -1, 0 };
+        int[] dy = { 0, -1, 0, 1 };
         int max_manhattan = -1;
         int max_dist = -1;
-        int[] ans = {-1, -1};
+        int[] ans = { -1, -1 };
         int[][] dists = new int[height][width];
 
         for (int i = 0; i < height; i++) {
@@ -131,15 +129,15 @@ public class MapData {
         }
 
         Queue<int[]> queue = new ArrayDeque<>();
-        queue.add(new int[]{1, 1});
+        queue.add(new int[] { 1, 1 });
         dists[1][1] = 0;
 
         // bfs
         while (!queue.isEmpty()) {
             int[] now = queue.poll();
             for (int i = 0; i < 4; i++) {
-                if (!(0 <= now[0] + dx[i] && now[0] + dx[i] < width &&
-                        0 <= now[1] + dy[i] && now[1] + dy[i] < height)) {
+                if (!(0 <= now[0] + dx[i] && now[0] + dx[i] < width && 0 <= now[1] + dy[i]
+                        && now[1] + dy[i] < height)) {
                     continue;
                 }
 
@@ -150,13 +148,13 @@ public class MapData {
                     continue;
                 }
                 if (getMap(next_x, next_y) == MapData.TYPE_SPACE) {
-                    queue.add(new int[]{next_x, next_y});
+                    queue.add(new int[] { next_x, next_y });
                     dists[next_y][next_x] = dists[now[1]][now[0]] + 1;
-                    if (max_dist < dists[next_y][next_x] ||
-                            (max_dist == dists[next_y][next_x] && max_manhattan < manhattan_dist(1, 1, next_x, next_y))) {
+                    if (max_dist < dists[next_y][next_x] || (max_dist == dists[next_y][next_x]
+                            && max_manhattan < manhattan_dist(1, 1, next_x, next_y))) {
                         max_manhattan = manhattan_dist(1, 1, next_x, next_y);
                         max_dist = dists[next_y][next_x];
-                        ans = new int[]{next_x, next_y};
+                        ans = new int[] { next_x, next_y };
                     }
                 }
             }
@@ -171,35 +169,35 @@ public class MapData {
 
     // restore route to the goal.
     public int[][] restore_route(int[][] dists, int[] goal) {
-        int[] dx = {1, 0, -1, 0};
-        int[] dy = {0, -1, 0, 1};
+        int[] dx = { 1, 0, -1, 0 };
+        int[] dy = { 0, -1, 0, 1 };
 
         int[][] route = new int[dists[goal[1]][goal[0]] + 1][2];
         int route_i = dists[goal[1]][goal[0]];
 
         Queue<int[]> queue = new ArrayDeque<>();
-        queue.add(new int[]{goal[0], goal[1]});
+        queue.add(new int[] { goal[0], goal[1] });
 
         // bfs
         while (!queue.isEmpty() && route_i > 1) {
             int[] now = queue.poll();
             for (int i = 0; i < 4; i++) {
-                if (!(0 <= now[0] + dx[i] && now[0] + dx[i] < width &&
-                        0 <= now[1] + dy[i] && now[1] + dy[i] < height)) {
+                if (!(0 <= now[0] + dx[i] && now[0] + dx[i] < width && 0 <= now[1] + dy[i]
+                        && now[1] + dy[i] < height)) {
                     continue;
                 }
 
                 int next_x = now[0] + dx[i];
                 int next_y = now[1] + dy[i];
                 if (dists[next_y][next_x] == dists[now[1]][now[0]] - 1) {
-                    queue.add(new int[]{next_x, next_y});
-                    route[route_i--] = new int[]{next_x, next_y};
+                    queue.add(new int[] { next_x, next_y });
+                    route[route_i--] = new int[] { next_x, next_y };
                     break;
                 }
             }
         }
 
-        route[0] = new int[]{1, 1};
+        route[0] = new int[] { 1, 1 };
 
         return route;
     }
