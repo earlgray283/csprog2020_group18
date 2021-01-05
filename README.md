@@ -36,3 +36,8 @@ $ make run
 ```console
 $ make clean
 ```
+
+### 画像元
++ http://dots-design.com/2008/12/1-3.html
++ https://hpgpixer.jp/image_icons/food/icon_foods_snack.html
++ 

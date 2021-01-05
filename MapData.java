@@ -3,16 +3,33 @@ import javafx.scene.image.ImageView;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
+import java.util.Random;
 
 public class MapData {
+    // enum にしたいな
     public static final int TYPE_SPACE = 0;
     public static final int TYPE_WALL = 1;
     public static final int TYPE_OTHERS = 2;
-    private static final String mapImageFiles[] = { "png/SPACE.png", "png/WALL.png" };
 
-    private Image[] mapImages;
+    public static final int ITEM_NONE = 0;
+    public static final int ITEM_GOAL_FLG = 1;
+    public static final int ITEM_SCORE_P = 2;
+    public static final int ITEM_SCORE_M = 3;
+    public static final int ITEM_WARP = 4;
+    public static final int ITEM_HINT = 5;
+
+    private static final String mapImageFiles[] = { "png/SPACE.png", "png/WALL.png" };
+    private static final String itemImageFiles[] = { "png/SPACE.png", "png/items/key.png", "png/items/milk.png",
+            "png/items/gorilla.png", "png/items/ufo.png", "png/items/hint.png" };
+
+    private Image[] mapImages, itemImages;
     private ImageView[][] mapImageViews;
     private int[][] maps;
+    /*
+     * item_map ... item を管理する用の map 0 ... itemなし 1 ... goal-flg 2 ... score+ 3 ...
+     * score- 4 ... warp 5 ... show hint
+     */
+    private int[][] item_map;
     private int width;
     private int height;
     private int[][] route_to_goal;
@@ -20,10 +37,14 @@ public class MapData {
 
     MapData(int x, int y) {
         mapImages = new Image[2];
-        mapImageViews = new ImageView[y][x];
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 2; i++)
             mapImages[i] = new Image(mapImageFiles[i]);
-        }
+
+        itemImages = new Image[6];
+        for (int i = 0; i < 6; i++)
+            itemImages[i] = new Image(itemImageFiles[i]);
+
+        mapImageViews = new ImageView[y][x];
 
         width = x;
         height = y;
@@ -31,6 +52,8 @@ public class MapData {
 
         fillMap(MapData.TYPE_WALL);
         digMap(1, 3);
+
+        item_map = setItemMap();
 
         goal = find_goal();
 
@@ -43,6 +66,31 @@ public class MapData {
 
     public int getWidth() {
         return width;
+    }
+
+    private int[][] setItemMap() {
+        int[][] item_map = new int[height][width];
+        Random rand = new Random();
+
+        int[] cnts = { 0, 1, 2, 3, 2, 2 };
+
+        for (int i = 1; i <= 5; i++) {
+            for (int cnt = 0; cnt < cnts[i]; cnt++) {
+                int x, y;
+                do {
+                    y = rand.nextInt(height);
+                    x = rand.nextInt(width);
+                } while (getMap(x, y) == TYPE_WALL || item_map[y][x] != ITEM_NONE);
+                System.out.printf("(%d, %d) == %d, %d\n", x, y, item_map[y][x], getMap(x, y));
+                item_map[y][x] = i;
+            }
+        }
+
+        return item_map;
+    }
+
+    public int getItemMap(int x, int y) {
+        return item_map[y][x];
     }
 
     public int getMap(int x, int y) {
@@ -67,7 +115,10 @@ public class MapData {
     public void setImageViews() {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                mapImageViews[y][x] = new ImageView(mapImages[maps[y][x]]);
+                if (getItemMap(x, y) == ITEM_NONE)
+                    mapImageViews[y][x] = new ImageView(mapImages[maps[y][x]]);
+                else
+                    mapImageViews[y][x] = new ImageView(itemImages[getItemMap(x, y)]);
             }
         }
     }
