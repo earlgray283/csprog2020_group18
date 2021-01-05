@@ -21,11 +21,15 @@ public class MapGameController implements Initializable {
         mapImageViews = new ImageView[mapData.getHeight() * mapData.getWidth()];
         for (int y = 0; y < mapData.getHeight(); y++) {
             for (int x = 0; x < mapData.getWidth(); x++) {
-                int index = y * mapData.getWidth() + x;
-                mapImageViews[index] = mapData.getImageView(x, y);
+                setMapImageViews(x, y);
             }
         }
         drawMap(chara, mapData);
+    }
+
+    public void setMapImageViews(int x, int y) {
+        int index = y * mapData.getWidth() + x;
+        mapImageViews[index] = mapData.getImageView(x, y);
     }
 
     public void initialize() {
@@ -63,6 +67,7 @@ public class MapGameController implements Initializable {
     public void keyAction(KeyEvent event) {
         KeyCode key = event.getCode();
         System.out.println("keycode:" + key);
+
         if (key == KeyCode.H) {
             leftButtonAction();
         } else if (key == KeyCode.J) {
@@ -73,13 +78,20 @@ public class MapGameController implements Initializable {
             rightButtonAction();
         }
 
+        if (mapData.getItem(chara.getPosX(), chara.getPosY()) != MapData.ITEM_NONE) {
+            mapData.handleItems(mapData.getItem(chara.getPosX(), chara.getPosY()), chara.getPosX(), chara.getPosY());
+            setMapImageViews(chara.getPosX(), chara.getPosY());
+        }
+
         if (mapData.is_goal(chara.getPosX(), chara.getPosY())) {
             System.out.println("goal");
+
             try {
                 Thread.sleep(2000, 0);
             } catch (InterruptedException e) {
                 System.out.println(e);
             }
+
             initialize();
         }
     }

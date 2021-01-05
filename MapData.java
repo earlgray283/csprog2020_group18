@@ -18,7 +18,9 @@ public class MapData {
     public static final int ITEM_WARP = 4;
     public static final int ITEM_HINT = 5;
 
-    private static final String mapImageFiles[] = { "png/mapSPACE.png", "png/map/WALL.png" };
+    private int score;
+
+    private static final String mapImageFiles[] = { "png/map/SPACE.png", "png/map/WALL.png" };
     private static final String itemImageFiles[] = { "png/map/SPACE.png", "png/items/key.png", "png/items/milk.png",
             "png/items/gorilla.png", "png/items/ufo.png", "png/items/hint.png" };
 
@@ -30,12 +32,17 @@ public class MapData {
      * score- 4 ... warp 5 ... show hint
      */
     private int[][] item_map;
+    private int[] inventory;
     private int width;
     private int height;
     private int[][] route_to_goal;
     private int[] goal;
 
     MapData(int x, int y) {
+        score = x * y;
+
+        inventory = new int[6];
+
         mapImages = new Image[2];
         for (int i = 0; i < 2; i++)
             mapImages[i] = new Image(mapImageFiles[i]);
@@ -68,6 +75,10 @@ public class MapData {
         return width;
     }
 
+    public int getScore() {
+        return score;
+    }
+
     private int[][] setItemMap() {
         int[][] item_map = new int[height][width];
         Random rand = new Random();
@@ -89,15 +100,45 @@ public class MapData {
         return item_map;
     }
 
-    public int getItemMap(int x, int y) {
+    public int getItem(int x, int y) {
         return item_map[y][x];
     }
 
-    public int getMap(int x, int y) {
-        if (x < 0 || width <= x || y < 0 || height <= y) {
-            return -1;
+    public void setItem(int x, int y, int type) {
+        item_map[y][x] = type;
+    }
+
+    public void handleItems(int item_id, int x, int y) {
+        switch (item_id) {
+            case ITEM_NONE:
+                break;
+            case ITEM_GOAL_FLG:
+                break;
+            case ITEM_SCORE_P:
+                score += 5;
+                break;
+            case ITEM_SCORE_M:
+                score -= 5;
+                break;
+            case ITEM_WARP:
+                // todo
+                break;
+            case ITEM_HINT:
+                // todo
+                break;
+            default:
+                System.out.println("no such item");
+                return;
         }
-        return maps[y][x];
+        setMap(x, y, MapData.TYPE_SPACE);
+        setItem(x, y, MapData.ITEM_NONE);
+        setImageViews();
+
+        inventory[item_id] += 1;
+    }
+
+    public int getMap(int x, int y) {
+        return x < 0 || width <= x || y < 0 || height <= y ? -1 : maps[y][x];
     }
 
     public ImageView getImageView(int x, int y) {
@@ -105,9 +146,9 @@ public class MapData {
     }
 
     public void setMap(int x, int y, int type) {
-        if (x < 1 || width <= x - 1 || y < 1 || height <= y - 1) {
+        if (x < 1 || width <= x - 1 || y < 1 || height <= y - 1)
             return;
-        }
+
         maps[y][x] = type;
     }
 
@@ -115,10 +156,8 @@ public class MapData {
     public void setImageViews() {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                if (getItemMap(x, y) == ITEM_NONE)
-                    mapImageViews[y][x] = new ImageView(mapImages[maps[y][x]]);
-                else
-                    mapImageViews[y][x] = new ImageView(itemImages[getItemMap(x, y)]);
+                mapImageViews[y][x] = new ImageView(
+                        getItem(x, y) == ITEM_NONE ? mapImages[maps[y][x]] : itemImages[getItem(x, y)]);
             }
         }
     }
