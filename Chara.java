@@ -89,6 +89,14 @@ public class Chara {
         return charaImageViews[charaDirection];
     }
 
+    public boolean setCharaPos(int x, int y) {
+        if (!(0 <= x && x < mapData.getWidth() && 0 <= y && y < mapData.getHeight())) return false;
+        if (mapData.getMap(x, y) == MapData.TYPE_WALL) return false;
+        posX = x;
+        posY = y;
+        return true;
+    }
+
     // getter: x-positon of the cat
     public int getPosX() {
         return posX;

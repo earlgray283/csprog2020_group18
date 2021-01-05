@@ -1,4 +1,5 @@
 import java.net.URL;
+import java.util.Random;
 import java.util.ResourceBundle;
 
 import javafx.event.ActionEvent;
@@ -120,7 +121,7 @@ public class MapGameController implements Initializable {
         scoreText.setText(s);
 
         handleItems(mapData.getItem(chara.getPosX(), chara.getPosY()), chara.getPosX(), chara.getPosY());
-        setMapImageViews(chara.getPosX(), chara.getPosY());
+        drawMap(chara, mapData);
 
         if (mapData.is_goal(chara.getPosX(), chara.getPosY())) {
             if (chara.existsItem(MapData.ITEM_GOAL_FLG)) {
@@ -151,7 +152,14 @@ public class MapGameController implements Initializable {
                 chara.addScore(-5);
                 break;
             case MapData.ITEM_WARP:
-
+                Random rnd = new Random();
+                while (true) {
+                    int x_ = rnd.nextInt(mapData.getWidth());
+                    int y_ = rnd.nextInt(mapData.getHeight());
+                    if (chara.setCharaPos(x_, y_)) {
+                        break;
+                    }
+                }
                 break;
             case MapData.ITEM_HINT:
                 // todo
@@ -169,6 +177,7 @@ public class MapGameController implements Initializable {
         mapData.setMap(x, y, MapData.TYPE_SPACE);
         mapData.setItem(x, y, MapData.ITEM_NONE);
         mapData.setImageViews();
+        setMapImageViews(x, y);
     }
 
     // Operations for going the cat down
