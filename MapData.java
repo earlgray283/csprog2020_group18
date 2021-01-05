@@ -145,6 +145,10 @@ public class MapData {
         return mapImageViews[y][x];
     }
 
+    public ImageView getItemImageView(int id) {
+        return new ImageView(itemImages[id]);
+    }
+
     public void setMap(int x, int y, int type) {
         if (x < 1 || width <= x - 1 || y < 1 || height <= y - 1)
             return;
