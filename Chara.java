@@ -2,7 +2,7 @@ import javafx.animation.AnimationTimer;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-public class MoveChara {
+public class Chara {
     public static final int TYPE_DOWN = 0;
     public static final int TYPE_LEFT = 1;
     public static final int TYPE_RIGHT = 2;
@@ -22,10 +22,16 @@ public class MoveChara {
     private ImageView[] charaImageViews;
     private ImageAnimation[] charaImageAnimations;
 
-    private int charaDirection;
+    private int score;
 
-    MoveChara(int startX, int startY, MapData mapData) {
+    private int charaDirection;
+    private int[] inventory;
+
+    Chara(int startX, int startY, MapData mapData) {
         this.mapData = mapData;
+
+        inventory = new int[6];
+        score = mapData.getHeight() * mapData.getWidth();
 
         charaImages = new Image[4][3];
         charaImageViews = new ImageView[4];
@@ -91,6 +97,26 @@ public class MoveChara {
     // getter: y-positon of the cat
     public int getPosY() {
         return posY;
+    }
+
+    public int[] getInventry() {
+        return inventory;
+    }
+
+    public void setInventory(int id) {
+        inventory[id] += 1;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void addScore(int x) {
+        score += x;
+    }
+
+    public boolean existsItem(int id) {
+        return inventory[id] > 0;
     }
 
     // Draw the cat animation

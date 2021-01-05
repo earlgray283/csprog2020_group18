@@ -18,8 +18,6 @@ public class MapData {
     public static final int ITEM_WARP = 4;
     public static final int ITEM_HINT = 5;
 
-    private int score;
-
     private static final String mapImageFiles[] = { "png/map/SPACE.png", "png/map/WALL.png" };
     private static final String itemImageFiles[] = { "png/map/SPACE.png", "png/items/key.png", "png/items/milk.png",
             "png/items/gorilla.png", "png/items/ufo.png", "png/items/hint.png" };
@@ -32,16 +30,13 @@ public class MapData {
      * score- 4 ... warp 5 ... show hint
      */
     private int[][] item_map;
-    private int[] inventory;
+    
     private int width;
     private int height;
     private int[][] route_to_goal;
     private int[] goal;
 
     MapData(int x, int y) {
-        score = x * y;
-
-        inventory = new int[6];
 
         mapImages = new Image[2];
         for (int i = 0; i < 2; i++)
@@ -75,10 +70,6 @@ public class MapData {
         return width;
     }
 
-    public int getScore() {
-        return score;
-    }
-
     private int[][] setItemMap() {
         int[][] item_map = new int[height][width];
         Random rand = new Random();
@@ -92,7 +83,6 @@ public class MapData {
                     y = rand.nextInt(height);
                     x = rand.nextInt(width);
                 } while (getMap(x, y) == TYPE_WALL || item_map[y][x] != ITEM_NONE);
-                System.out.printf("(%d, %d) == %d, %d\n", x, y, item_map[y][x], getMap(x, y));
                 item_map[y][x] = i;
             }
         }
@@ -106,45 +96,6 @@ public class MapData {
 
     public void setItem(int x, int y, int type) {
         item_map[y][x] = type;
-    }
-
-    public boolean existsItem(int id) {
-        return inventory[id] > 0 ? true : false;
-    }
-
-    public int[] getInventry() {
-        return inventory;
-    }
-
-    public void handleItems(int item_id, int x, int y) {
-        switch (item_id) {
-            case ITEM_NONE:
-                score -= 1;
-                break;
-            case ITEM_GOAL_FLG:
-                break;
-            case ITEM_SCORE_P:
-                score += 5;
-                break;
-            case ITEM_SCORE_M:
-                score -= 5;
-                break;
-            case ITEM_WARP:
-                // todo
-                break;
-            case ITEM_HINT:
-                // todo
-                break;
-            default:
-                System.out.println("no such item");
-                return;
-        }
-        if (score < 0) score = 0;
-        setMap(x, y, MapData.TYPE_SPACE);
-        setItem(x, y, MapData.ITEM_NONE);
-        setImageViews();
-
-        inventory[item_id] += 1;
     }
 
     public int getMap(int x, int y) {

@@ -14,7 +14,7 @@ import javafx.scene.text.TextAlignment;
 
 public class MapGameController implements Initializable {
     public MapData mapData;
-    public MoveChara chara;
+    public Chara chara;
     public GridPane mapGrid, itemGrid;
     public ImageView[] mapImageViews;
     public Text scoreText;
@@ -22,7 +22,7 @@ public class MapGameController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         mapData = new MapData(21, 15);
-        chara = new MoveChara(1, 1, mapData);
+        chara = new Chara(1, 1, mapData);
         mapImageViews = new ImageView[mapData.getHeight() * mapData.getWidth()];
         for (int y = 0; y < mapData.getHeight(); y++) {
             for (int x = 0; x < mapData.getWidth(); x++) {
@@ -42,7 +42,7 @@ public class MapGameController implements Initializable {
 
     public void initialize() {
         mapData = new MapData(21, 15);
-        chara = new MoveChara(1, 1, mapData);
+        chara = new Chara(1, 1, mapData);
         mapImageViews = new ImageView[mapData.getHeight() * mapData.getWidth()];
         for (int y = 0; y < mapData.getHeight(); y++) {
             for (int x = 0; x < mapData.getWidth(); x++) {
@@ -57,7 +57,7 @@ public class MapGameController implements Initializable {
     }
 
     // Draw the map
-    public void drawMap(MoveChara c, MapData m) {
+    public void drawMap(Chara c, MapData m) {
         int cx = c.getPosX();
         int cy = c.getPosY();
 
@@ -75,7 +75,7 @@ public class MapGameController implements Initializable {
 
         itemGrid.getChildren().clear();
         itemGrid.setStyle("-fx-grid-lines-visible: true;");
-        int[] inventory = m.getInventry();
+        int[] inventory = c.getInventry();
 
         for (int i = 0, id = 1; i < 4; i++) {
             for (int j = 0; j < 2; j++) {
@@ -96,7 +96,7 @@ public class MapGameController implements Initializable {
                 id++;
             }
         }
-        
+
     }
 
     // Get users key actions
@@ -114,16 +114,16 @@ public class MapGameController implements Initializable {
             rightButtonAction();
         }
 
-        System.out.println(mapData.getScore());
-        String s = String.valueOf(mapData.getScore());
+        System.out.println(chara.getScore());
+        String s = String.valueOf(chara.getScore());
         System.out.println(s);
         scoreText.setText(s);
 
-        mapData.handleItems(mapData.getItem(chara.getPosX(), chara.getPosY()), chara.getPosX(), chara.getPosY());
+        handleItems(mapData.getItem(chara.getPosX(), chara.getPosY()), chara.getPosX(), chara.getPosY());
         setMapImageViews(chara.getPosX(), chara.getPosY());
 
         if (mapData.is_goal(chara.getPosX(), chara.getPosY())) {
-            if (mapData.existsItem(MapData.ITEM_GOAL_FLG)) {
+            if (chara.existsItem(MapData.ITEM_GOAL_FLG)) {
                 System.out.println("goal");
 
                 try {
@@ -137,10 +137,44 @@ public class MapGameController implements Initializable {
         }
     }
 
+    public void handleItems(int item_id, int x, int y) {
+        switch (item_id) {
+            case MapData.ITEM_NONE:
+                chara.addScore(-1);
+                break;
+            case MapData.ITEM_GOAL_FLG:
+                break;
+            case MapData.ITEM_SCORE_P:
+                chara.addScore(5);
+                break;
+            case MapData.ITEM_SCORE_M:
+                chara.addScore(-5);
+                break;
+            case MapData.ITEM_WARP:
+
+                break;
+            case MapData.ITEM_HINT:
+                // todo
+                break;
+            default:
+                System.out.println("no such item");
+                return;
+        }
+
+        chara.setInventory(item_id);
+
+        if (chara.getScore() < 0)
+            chara.addScore(-chara.getScore());
+        
+        mapData.setMap(x, y, MapData.TYPE_SPACE);
+        mapData.setItem(x, y, MapData.ITEM_NONE);
+        mapData.setImageViews();
+    }
+
     // Operations for going the cat down
     public void upButtonAction() {
         printAction("UP");
-        chara.setCharaDirection(MoveChara.TYPE_UP);
+        chara.setCharaDirection(Chara.TYPE_UP);
         chara.move(0, -1);
         drawMap(chara, mapData);
     }
@@ -148,7 +182,7 @@ public class MapGameController implements Initializable {
     // Operations for going the cat down
     public void downButtonAction() {
         printAction("DOWN");
-        chara.setCharaDirection(MoveChara.TYPE_DOWN);
+        chara.setCharaDirection(Chara.TYPE_DOWN);
         chara.move(0, 1);
         drawMap(chara, mapData);
     }
@@ -156,7 +190,7 @@ public class MapGameController implements Initializable {
     // Operations for going the cat right
     public void leftButtonAction() {
         printAction("LEFT");
-        chara.setCharaDirection(MoveChara.TYPE_LEFT);
+        chara.setCharaDirection(Chara.TYPE_LEFT);
         chara.move(-1, 0);
         drawMap(chara, mapData);
     }
@@ -164,7 +198,7 @@ public class MapGameController implements Initializable {
     // Operations for going the cat right
     public void rightButtonAction() {
         printAction("RIGHT");
-        chara.setCharaDirection(MoveChara.TYPE_RIGHT);
+        chara.setCharaDirection(Chara.TYPE_RIGHT);
         chara.move(1, 0);
         drawMap(chara, mapData);
     }
