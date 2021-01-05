@@ -2,15 +2,15 @@ import javafx.animation.AnimationTimer;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-public class MoveChara {
+public class Chara {
     public static final int TYPE_DOWN = 0;
     public static final int TYPE_LEFT = 1;
     public static final int TYPE_RIGHT = 2;
     public static final int TYPE_UP = 3;
 
-    private final String[] directions = {"Down", "Left", "Right", "Up"};
-    private final String[] animationNumbers = {"1", "2", "3"};
-    private final String pngPathBefore = "png/cat";
+    private final String[] directions = { "Down", "Left", "Right", "Up" };
+    private final String[] animationNumbers = { "1", "2", "3" };
+    private final String pngPathBefore = "png/chara/cat";
     private final String pngPathAfter = ".png";
 
     private int posX;
@@ -22,10 +22,16 @@ public class MoveChara {
     private ImageView[] charaImageViews;
     private ImageAnimation[] charaImageAnimations;
 
-    private int charaDirection;
+    private int score;
 
-    MoveChara(int startX, int startY, MapData mapData) {
+    private int charaDirection;
+    private int[] inventory;
+
+    Chara(int startX, int startY, MapData mapData) {
         this.mapData = mapData;
+
+        inventory = new int[6];
+        score = mapData.getHeight() * mapData.getWidth();
 
         charaImages = new Image[4][3];
         charaImageViews = new ImageView[4];
@@ -83,6 +89,14 @@ public class MoveChara {
         return charaImageViews[charaDirection];
     }
 
+    public boolean setCharaPos(int x, int y) {
+        if (!(0 <= x && x < mapData.getWidth() && 0 <= y && y < mapData.getHeight())) return false;
+        if (mapData.getMap(x, y) == MapData.TYPE_WALL) return false;
+        posX = x;
+        posY = y;
+        return true;
+    }
+
     // getter: x-positon of the cat
     public int getPosX() {
         return posX;
@@ -93,13 +107,33 @@ public class MoveChara {
         return posY;
     }
 
+    public int[] getInventry() {
+        return inventory;
+    }
+
+    public void setInventory(int id) {
+        inventory[id] += 1;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void addScore(int x) {
+        score += x;
+    }
+
+    public boolean existsItem(int id) {
+        return inventory[id] > 0;
+    }
+
     // Draw the cat animation
     private class ImageAnimation extends AnimationTimer {
         private ImageView charaView = null;
         private Image[] charaImages = null;
         private int index = 0;
 
-        private long duration = 500 * 1000000L;   // 500[ms]
+        private long duration = 500 * 1000000L; // 500[ms]
         private long startTime = 0;
 
         private long count = 0L;

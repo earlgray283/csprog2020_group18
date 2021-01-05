@@ -22,17 +22,13 @@ $ dpkg -L openjfx
 
 ## Commands
 基本的にコンパイルや実行などは `make` で行ってください。そっちのほうが楽ですし、メンバー全員で統一することができます。
-### Compile
-```console
-$ make
-```
 
 ### Run
 ```console
 $ make run
 ```
 
-### Clean
-```console
-$ make clean
-```
+### 画像元
++ http://dots-design.com/2008/12/1-3.html
++ https://hpgpixer.jp/image_icons
++ 
