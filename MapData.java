@@ -18,8 +18,8 @@ public class MapData {
     public static final int ITEM_WARP = 4;
     public static final int ITEM_HINT = 5;
 
-    private static final String mapImageFiles[] = { "png/SPACE.png", "png/WALL.png" };
-    private static final String itemImageFiles[] = { "png/SPACE.png", "png/items/key.png", "png/items/milk.png",
+    private static final String mapImageFiles[] = { "png/mapSPACE.png", "png/map/WALL.png" };
+    private static final String itemImageFiles[] = { "png/map/SPACE.png", "png/items/key.png", "png/items/milk.png",
             "png/items/gorilla.png", "png/items/ufo.png", "png/items/hint.png" };
 
     private Image[] mapImages, itemImages;
