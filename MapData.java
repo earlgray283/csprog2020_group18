@@ -23,7 +23,7 @@ public class MapData {
     private static final String mapImageFiles[] = { "png/map/SPACE.png", "png/map/WALL.png" };
     private static final String itemImageFiles[] = { "png/map/SPACE.png", "png/items/key.png", "png/items/milk.png",
             "png/items/gorilla.png", "png/items/ufo.png", "png/items/hint.png" };
-
+    
     private AudioClip audioClip;
     private Image[] mapImages, itemImages;
     private ImageView[][] mapImageViews;
