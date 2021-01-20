@@ -14,8 +14,10 @@ import javafx.scene.media.AudioClip;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
 
 public class MapGameController implements Initializable {
+    public static Stage stage;
     public MapData mapData;
     public Chara chara;
     public GridPane mapGrid, itemGrid;
@@ -131,14 +133,8 @@ public class MapGameController implements Initializable {
             if (chara.existsItem(MapData.ITEM_GOAL_FLG)) {
                 System.out.println("goal");
                 mapData.stopAudio();
-
-                try {
-                    Thread.sleep(2000, 0);
-                } catch (InterruptedException e) {
-                    System.out.println(e);
-                }
-
-                initialize();
+                
+                stage.setScene(MapGame.resultScene);
             }
         }
     }
