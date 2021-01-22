@@ -133,6 +133,8 @@ public class MapGameController implements Initializable {
             if (chara.existsItem(MapData.ITEM_GOAL_FLG)) {
                 System.out.println("goal");
                 mapData.stopAudio();
+
+                ResultController.scoreText.setText(String.valueOf(chara.getScore()));
                 
                 stage.setScene(MapGame.resultScene);
             }

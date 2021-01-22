@@ -22,7 +22,7 @@ public class Chara {
     private ImageView[] charaImageViews;
     private ImageAnimation[] charaImageAnimations;
 
-    private int score;
+    public static int score;
 
     private int charaDirection;
     private int[] inventory;

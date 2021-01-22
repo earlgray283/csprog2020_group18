@@ -15,7 +15,7 @@ import javafx.scene.text.Text;
 
 public class ResultController implements Initializable {
     public Button rankingBtn;
-    public Text scoreText;
+    public static Text scoreText;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
