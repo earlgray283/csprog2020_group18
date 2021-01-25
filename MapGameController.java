@@ -23,7 +23,6 @@ public class MapGameController implements Initializable {
     public GridPane mapGrid, itemGrid;
     public ImageView[] mapImageViews;
     public Text scoreText;
-    private AudioClip audioClip;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -134,7 +133,7 @@ public class MapGameController implements Initializable {
                 System.out.println("goal");
                 mapData.stopAudio();
 
-                ResultController.scoreText.setText(String.valueOf(chara.getScore()));
+                MapGame.resultController.scoreText.setText(String.valueOf(chara.getScore()));
                 
                 stage.setScene(MapGame.resultScene);
             }
@@ -226,7 +225,10 @@ public class MapGameController implements Initializable {
     }
 
     public void func1ButtonAction(ActionEvent event) {
-        System.out.println("func1: Nothing to do");
+        Boolean res = chara.setCharaPos(mapData.getGoalX(), mapData.getGoalY());
+        chara.setInventory(MapData.ITEM_GOAL_FLG);
+        drawMap(chara, mapData);
+        System.out.println("Debug mode: FAST GOAL " + res);
     }
 
     // Print actions of user inputs

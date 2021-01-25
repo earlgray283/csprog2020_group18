@@ -69,6 +69,14 @@ public class MapData {
         setImageViews();
     }
 
+    public int getGoalX() {
+        return goal[0];
+    }
+
+    public int getGoalY() {
+        return goal[1];
+    }
+
     public int getHeight() {
         return height;
     }
