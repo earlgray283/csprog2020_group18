@@ -20,7 +20,7 @@
     <HBox prefHeight="50">
       <children>
         <Button onAction="#func1ButtonAction" prefWidth="100" text="func1" />
-        <Button prefWidth="100" text="func2" />
+        <Button onAction="#func2ButtonAction" prefWidth="100" text="func2" />
         <Button prefWidth="100" text="func3" />
         <Button prefWidth="100" text="func4" />
             <Pane prefHeight="26.0" prefWidth="110.0" />

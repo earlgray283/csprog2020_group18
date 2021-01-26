@@ -1,5 +1,7 @@
 import java.io.File;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Queue;
 import java.util.Random;
 
@@ -23,7 +25,7 @@ public class MapData {
     private static final String mapImageFiles[] = { "png/map/SPACE.png", "png/map/WALL.png" };
     private static final String itemImageFiles[] = { "png/map/SPACE.png", "png/items/key.png", "png/items/milk.png",
             "png/items/gorilla.png", "png/items/ufo.png", "png/items/hint.png" };
-    
+
     private AudioClip audioClip;
     private Image[] mapImages, itemImages;
     private ImageView[][] mapImageViews;
@@ -33,17 +35,16 @@ public class MapData {
      * score- 4 ... warp 5 ... show hint
      */
     private int[][] item_map;
-    
+
     private int width;
     private int height;
-    private int[][] route_to_goal;
+    public int[][] route_to_goal;
     private int[] goal;
 
     MapData(int x, int y) {
         audioClip = new AudioClip(new File("bgm/map.mp3").toURI().toString());
         audioClip.setVolume(0.5);
         audioClip.setCycleCount(AudioClip.INDEFINITE);
-        audioClip.play();
 
         mapImages = new Image[2];
         for (int i = 0; i < 2; i++)
@@ -64,7 +65,7 @@ public class MapData {
 
         item_map = setItemMap();
 
-        goal = find_goal();
+        goal = find_goal(1, 1);
 
         setImageViews();
     }
@@ -83,6 +84,10 @@ public class MapData {
 
     public int getWidth() {
         return width;
+    }
+
+    public void playAudio() {
+        audioClip.play();
     }
 
     public void stopAudio() {
@@ -188,7 +193,7 @@ public class MapData {
 
     // find goal. The goal is defined as the maximum manhattan distance and the
     // maximum dist.
-    public int[] find_goal() {
+    public int[] find_goal(int start_x, int start_y) {
         int[] dx = { 1, 0, -1, 0 };
         int[] dy = { 0, -1, 0, 1 };
         int max_manhattan = -1;
@@ -203,8 +208,8 @@ public class MapData {
         }
 
         Queue<int[]> queue = new ArrayDeque<>();
-        queue.add(new int[] { 1, 1 });
-        dists[1][1] = 0;
+        queue.add(new int[] { start_x, start_y });
+        dists[start_y][start_x] = 0;
 
         // bfs
         while (!queue.isEmpty()) {
@@ -236,21 +241,60 @@ public class MapData {
 
         System.out.println("goal: " + ans[0] + ", " + ans[1]);
 
-        route_to_goal = restore_route(dists, ans);
-
         return ans;
     }
 
+    public ArrayList<int[]> search_min_route(int start_x, int start_y, int goal_x, int goal_y) {
+        int[] dx = { 1, 0, -1, 0 };
+        int[] dy = { 0, -1, 0, 1 };
+        int[][] dists = new int[height][width];
+
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                dists[i][j] = -1;
+            }
+        }
+
+        Queue<int[]> queue = new ArrayDeque<>();
+        queue.add(new int[] { start_x, start_y });
+        dists[start_y][start_x] = 0;
+
+        // bfs
+        while (!queue.isEmpty()) {
+            int[] now = queue.poll();
+            for (int i = 0; i < 4; i++) {
+                if (!(0 <= now[0] + dx[i] && now[0] + dx[i] < width && 0 <= now[1] + dy[i]
+                        && now[1] + dy[i] < height)) {
+                    continue;
+                }
+
+                int next_x = now[0] + dx[i];
+                int next_y = now[1] + dy[i];
+
+                if (dists[next_y][next_x] != -1 && dists[next_y][next_x] < dists[now[1]][now[0]] + 1) {
+                    continue;
+                }
+                if (getMap(next_x, next_y) == MapData.TYPE_SPACE) {
+                    queue.add(new int[] { next_x, next_y });
+                    dists[next_y][next_x] = dists[now[1]][now[0]] + 1;
+                }
+            }
+        }
+
+        return restore_route(dists, new int[]{goal_x, goal_y});
+    }
+
     // restore route to the goal.
-    public int[][] restore_route(int[][] dists, int[] goal) {
+    public ArrayList<int[]> restore_route(int[][] dists, int[] goal) {
         int[] dx = { 1, 0, -1, 0 };
         int[] dy = { 0, -1, 0, 1 };
 
-        int[][] route = new int[dists[goal[1]][goal[0]] + 1][2];
-        int route_i = dists[goal[1]][goal[0]];
+        ArrayList<int[]> route = new ArrayList<>();
 
         Queue<int[]> queue = new ArrayDeque<>();
         queue.add(new int[] { goal[0], goal[1] });
+
+        int route_i = dists[goal[1]][goal[0]];
 
         // bfs
         while (!queue.isEmpty() && route_i > 1) {
@@ -264,14 +308,15 @@ public class MapData {
                 int next_x = now[0] + dx[i];
                 int next_y = now[1] + dy[i];
                 if (dists[next_y][next_x] == dists[now[1]][now[0]] - 1) {
+                    System.out.println(next_x + ", " + next_y);
                     queue.add(new int[] { next_x, next_y });
-                    route[route_i--] = new int[] { next_x, next_y };
+                    route.add(new int[] { next_x, next_y });
                     break;
                 }
             }
         }
 
-        route[0] = new int[] { 1, 1 };
+        Collections.reverse(route);
 
         return route;
     }
