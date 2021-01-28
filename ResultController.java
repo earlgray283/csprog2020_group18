@@ -4,6 +4,7 @@ import java.util.ResourceBundle;
 
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
@@ -14,8 +15,8 @@ import javafx.scene.media.AudioClip;
 import javafx.scene.text.Text;
 
 public class ResultController implements Initializable {
-    public Button rankingBtn;
-    public Text scoreText;
+    public Button rankingBtn, sendBtn;
+    public Text scoreText, doneText;
     public AudioClip audioClip;
 
     @Override
@@ -34,5 +35,43 @@ public class ResultController implements Initializable {
                 )
             )
         );
+
+        doneText.setVisible(false);
+
+        rankingBtn.setOnAction(event -> {
+            try {
+                var scores = ScoreManager.getScore();
+                scores.sort((a, b) -> a.score - b.score);
+
+                System.out.println(MapGame.rankingController);
+                System.out.println(MapGame.mapGameController);
+
+                MapGame.rankingController.BuildRankingScene(scores);
+                MapGameController.stage.setScene(MapGame.rankingScene);
+
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        sendBtn.setOnAction(event -> {
+            String name;
+            int score = MapGame.mapGameController.chara.getScore();
+
+            TextInputDialog dialog = new TextInputDialog("guest");
+            name = dialog.showAndWait().get();
+
+            try {
+                var res = ScoreManager.postScore(name, score);
+                if (!res) {
+                    System.out.println("Error occuar!");
+                } else {
+                    sendBtn.setVisible(false);
+                    doneText.setVisible(true);
+                }
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 }

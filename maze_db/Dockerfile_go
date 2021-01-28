@@ -1,0 +1,12 @@
+FROM golang:1.15.7
+
+COPY main.go .
+COPY go.mod .
+COPY go.sum .
+
+ENV TZ Asia/Tokyo
+ENV GOPATH=
+
+RUN go build -o ./score_server
+
+CMD ["./score_server"]

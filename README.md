@@ -20,6 +20,13 @@ $ sudo apt install openjfx
 $ dpkg -L openjfx
 ```
 
++ libmariadb-java とか
+```console
+$ sudo apt install libmariadb-java
+$ wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.23.zip
+$ unzip mysql-connector-java-8.0.23.zip
+```
+
 ## Commands
 基本的にコンパイルや実行などは `make` で行ってください。そっちのほうが楽ですし、メンバー全員で統一することができます。
 

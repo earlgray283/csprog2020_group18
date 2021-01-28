@@ -24,6 +24,12 @@
             <Font size="43.0" />
          </font>
       </Text>
+      <Button fx:id="sendBtn" layoutX="407.0" layoutY="336.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="96.0" style="-fx-background-image: url(&quot;png/ranking.png&quot;);" text="Send Result" />
       <Button fx:id="rankingBtn" layoutX="536.0" layoutY="336.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-image: url(&quot;png/ranking.png&quot;);" />
+      <Text fx:id="doneText" layoutX="412.0" layoutY="375.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Done" wrappingWidth="114.7294921875">
+         <font>
+            <Font size="33.0" />
+         </font>
+      </Text>
    </children>
 </Pane>
